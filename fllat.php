@@ -4,13 +4,13 @@
  * Fllat: A flat file database system. Driven by PHP.
  * Stores data in JSON. SQL based data fetching.
  *
- * PHP version 5
+ * PHP version 5.4
  *
  * @author    Alfred Xing <xing@lfred.info>
  * @copyright 2013 Alfred Xing
  * @license   LICENSE.md MIT License
  * @version   0.1
- * 
+ *
  */
 
 require "vendor/prequel.php";
@@ -20,7 +20,7 @@ class Fllat
 
 	/**
 	 * Create a database
-	 * 
+	 *
 	 * @param string $name name of the database
 	 * @param string $path directory of the database file
 	 */
@@ -33,9 +33,9 @@ class Fllat
 
 	/**
 	 * Initialize database for work
-	 * 
+	 *
 	 * @param string $file relative path of database
-	 * 
+	 *
 	 * @return string       existence status of database
 	 */
 	function go($file)
@@ -52,7 +52,7 @@ class Fllat
 
 	/**
 	 * Delete database
-	 * 
+	 *
 	 * @return string
 	 */
 	function del()
@@ -68,17 +68,18 @@ class Fllat
 
 	/**
 	 * Rewrite data
-	 * 
+	 *
 	 * @param array $data
 	 */
 	function rw($data)
 	{
 		file_put_contents($this -> file, json_encode($data));
+		return $data;
 	}
 
 	/**
 	 * Appends data to database
-	 * 
+	 *
 	 * @param array $data
 	 */
 	function add($data)
@@ -90,13 +91,13 @@ class Fllat
 			$_db = array();
 		};
 		$_db[] = $data;
-		$this -> rw($_db);
+		return $this -> rw($_db);
 	}
 
 	/**
 	 * Remove a row from the database
-	 * 
-	 * @param  integer $index the index of the row to remove
+	 *
+	 * @param integer $index the index of the row to remove
 	 */
 	function rm($index) {
 		$_old = file_get_contents($this -> file);
@@ -106,17 +107,69 @@ class Fllat
 			$_db = array();
 		};
 		array_splice($_db, $index, 1);
-		$this -> rw($_db);
+		return $this -> rw($_db);
+	}
+
+	/**
+	 * Returns the index of a row where key matches value
+	 *
+	 * @param string $key
+	 * @param string $val
+	 *
+	 * @return integer
+	 */
+	function index($key, $val)
+	{
+		$_old = file_get_contents($this -> file);
+		if ($_old) {
+			$_db = json_decode($_old, true);
+			foreach ($_db as $index => $row) {
+				if ($row[$key] === $val && $row[$col]) {
+					return $index;
+					break;
+				}
+			}
+		} else {
+			return ;
+		}
+	}
+
+	/**
+	 * Change the value of a key
+	 *
+	 * @param string $col
+	 * @param string $to
+	 * @param string $key
+	 * @param string $val
+	 *
+	 * @return array
+	 */
+	function to($col, $to, $key, $val)
+	{
+		$_old = file_get_contents($this -> file);
+		if ($_old) {
+			$_result = array();
+			$_db = json_decode($_old, true);
+			foreach ($_db as $index => $row) {
+				if ($row[$key] === $val) {
+					$_db[$index][$col] = $to;
+					$_result = 1;
+				};
+			}
+			return $this -> rw($_db);
+		} else {
+			return ;
+		}
 	}
 
 
 	/**
 	 * Get the row where the value matches that of the key and return the value of the other key
-	 * 
+	 *
 	 * @param string $col
 	 * @param string $key
 	 * @param string $val
-	 * 
+	 *
 	 * @return array
 	 */
 	function get($col, $key, $val)
@@ -137,9 +190,9 @@ class Fllat
 
 	/**
 	 * Get a set of columns for all rows
-	 * 
+	 *
 	 * @param array $cols the list of columns to get, empty for all
-	 * 
+	 *
 	 * @return array
 	 */
 	function select($cols = array())
@@ -177,11 +230,11 @@ class Fllat
 
 	/**
 	 * Get the row where the value matches that of the key and return the value of the other key
-	 * 
+	 *
 	 * @param array  $cols
 	 * @param string $key
 	 * @param string $val
-	 * 
+	 *
 	 * @return array
 	 */
 	function where($cols, $key, $val)
@@ -220,11 +273,11 @@ class Fllat
 
 	/**
 	 * Get columns from rows in which the key's value is part of the inputted array of values
-	 * 
+	 *
 	 * @param array  $cols the columns to return
 	 * @param string $key  the column to look for the value
 	 * @param array  $val  an array of values to be accepted
-	 * 
+	 *
 	 * @return array
 	 */
 	function in($cols, $key, $val)
@@ -263,11 +316,11 @@ class Fllat
 
 	/**
 	 * Matches keys and values based on a regular expression
-	 * 
+	 *
 	 * @param array  $cols  the columns to return; an empty array returns all columns
 	 * @param string $key   the column whose value to match
 	 * @param string $regex the regular expression to match
-	 * 
+	 *
 	 * @return array
 	 */
 	function like($cols, $key, $regex)
@@ -307,10 +360,10 @@ class Fllat
 
 	/**
 	 * Merges two databases and gets rid of duplicates
-	 * 
+	 *
 	 * @param array $cols   the columns to merge
 	 * @param Fllat $second the second database to merge
-	 * 
+	 *
 	 * @return array          the merged array
 	 */
 	function union($cols, $second)
@@ -331,12 +384,12 @@ class Fllat
 
 	/**
 	 * Matches and merges columns between databases
-	 * 
+	 *
 	 * @param string $method the method to join (inner, left, right, full)
 	 * @param array  $cols   the columns to select
 	 * @param Fllat  $second the second database to consider
 	 * @param array  $match  a key-value pair: left column to match => right column
-	 * 
+	 *
 	 * @return array joined array
 	 */
 	function join($method, $cols, $second, $match)
@@ -405,10 +458,10 @@ class Fllat
 
 	/**
 	 * Checks whether the given key/value pair exists
-	 * 
+	 *
 	 * @param string $key the key
 	 * @param string $val the value
-	 * 
+	 *
 	 * @return boolean whether the pair exists
 	 */
 	function exists($key, $val)
@@ -430,9 +483,9 @@ class Fllat
 
 	/**
 	 * Counts the number of items per column or for all columns
-	 * 
+	 *
 	 * @param string $col the column name to count. No input counts all columns.
-	 * 
+	 *
 	 * @return int the number of rows containing that column.
 	 */
 	function count($col = "")
@@ -447,9 +500,9 @@ class Fllat
 
 	/**
 	 * Gets the first item of a column
-	 * 
+	 *
 	 * @param string $col the column to look at
-	 * 
+	 *
 	 * @return mixed the first item in the column
 	 */
 	function first($col)
@@ -459,9 +512,9 @@ class Fllat
 
 	/**
 	 * Gets the last item in a column
-	 * 
+	 *
 	 * @param string $col the name of the column to look at
-	 * 
+	 *
 	 * @return mixed the last item in the column
 	 */
 	function last($col)
