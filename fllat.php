@@ -124,7 +124,7 @@ class Fllat
 		if ($_old) {
 			$_db = json_decode($_old, true);
 			foreach ($_db as $index => $row) {
-				if ($row[$key] === $val && $row[$col]) {
+				if ($row[$key] === $val) {
 					return $index;
 					break;
 				}
