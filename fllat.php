@@ -111,6 +111,23 @@ class Fllat
 	}
 
 	/**
+	 * Updates a row in the database
+	 *
+	 * @param integer $index the index of the row to update
+	 * @param array $data
+	 */
+	function update($index, $data) {
+		$_old = file_get_contents($this -> file);
+		if ($_old) {
+			$_db = json_decode(file_get_contents($this -> file), true);
+		} else {
+			$_db = array();
+		};
+		$_db[$index] = array_merge($_db[$index], $data);
+		return $this -> rw($_db);
+	}
+
+	/**
 	 * Returns the index of a row where key matches value
 	 *
 	 * @param string $key
@@ -124,7 +141,7 @@ class Fllat
 		if ($_old) {
 			$_db = json_decode($_old, true);
 			foreach ($_db as $index => $row) {
-				if ($row[$key] === $val && $row[$col]) {
+				if ($row[$key] === $val) {
 					return $index;
 					break;
 				}
