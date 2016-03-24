@@ -1,3 +1,6 @@
+> ### Notice
+> This library and repository is no longer being maintained. Feel free, as always, to fork and make your own versions!
+
 Fllat
 =====
 
