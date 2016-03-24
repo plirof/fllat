@@ -11,11 +11,11 @@ The awesomest part is that there are **no running services**, just pure PHP at w
 
 ## Documentation
 
-**For a guide to all of the functions, use [this wiki page](https://github.com/alfredxing/fllat/wiki/Functions).**
+**For a guide to all of the functions, use [this wiki page](https://github.com/wylst/fllat/wiki/Functions).**
 
 ## Getting started
 
-Simply pull this git repository or [download the archive](https://github.com/alfredxing/fllat/zipball/master) and run it on a PHP-enabled server.
+Simply pull this git repository or [download the archive](https://github.com/wylst/fllat/zipball/master) and run it on a PHP-enabled server.
 
 ### Accessing Fllat
 To access Fllat from any PHP file, `require` the `fllat.php` file:
